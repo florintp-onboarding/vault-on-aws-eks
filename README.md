@@ -61,14 +61,14 @@ cp <path_to_your_license>/your_vault_ent.license vault_license.hclic
 ```shell
 aws configure
 ```
-`
+```
 # As example you may get something like:
 # aws configure
 # AWS Access Key ID [****************HEHO]:
 # AWS Secret Access Key [****************e9k+]:
 # Default region name [eu-central-1]:
 # Default output format [None]:
-`
+```
 
 4. Execute the creation script
 ```shell
