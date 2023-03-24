@@ -72,13 +72,13 @@ aws configure
 
 4. Execute the creation script
 ```shell
-$ bash deploy_vault_on_eks.sh
+bash deploy_vault_on_eks.sh
 ```
 
 5. Export the VAULT_ADDR, VAULT_TOKEN, login to Vault and check the status of Vault cluster
 ```shell
-$ vault status
-$ unset VAULT_TOKEN
+vault status
+unset VAULT_TOKEN
 export EXTERNAL_VAULT_ADDR=$(kubectl get rc,services -n vault|grep 'vault-ui'|awk '{print $(NF-2)}')
 export VAULT_ADDR="http://$EXTERNAL_VAULT_ADDR:8200"
 export VAULT_TOKEN=$(jq -r ".root_token" init-keys.json)
@@ -90,3 +90,5 @@ vault operator raft list-peers
 6. Cleanup
 ```shell
 eksctl delete cluster --region=<eu-central-1> --name=<cluster_name>
+bash clean.sh
+```
