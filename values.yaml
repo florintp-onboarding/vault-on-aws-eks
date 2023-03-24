@@ -1,0 +1,84 @@
+server:
+  image:
+    repository: "hashicorp/vault-enterprise"
+    tag: "1.13.0-ent"
+    # Overrides the default Image Pull Policy
+    pullPolicy: IfNotPresent
+#
+  # Configure the Update Strategy Type for the StatefulSet
+  # See https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
+  updateStrategyType: "OnDelete"
+  enabled: "-"
+  enterpriseLicense:
+  # The name of the Kubernetes secret that holds the enterprise license. The
+  # secret must be in the same namespace that Vault is installed into.
+    secretName: "vault-license"
+  # The key within the Kubernetes secret that holds the enterprise license.
+    secretKey: "VAULT_LICENSE"
+#
+  # Configure the logging verbosity for the Vault server.
+  # Supported log levels include: trace, debug, info, warn, error
+  logLevel: "trace"
+  logFormat: "standard"
+  affinity: ""
+  ha:
+    enabled: true
+    replicas: 3
+    raft:
+      enabled: true
+      setNodeId: true
+      config: |
+        disable_mlock = true
+        ui = true
+        log_level = "trace"
+        raw_storage_endpoint = true
+        enable_response_header_hostname = true
+        enable_response_header_raft_node_id = true
+        listener "tcp" {
+          tls_disable = 1
+          address = "[::]:8200"
+          cluster_address = "[::]:8201"
+          telemetry {
+            unauthenticated_metrics_access = "true"
+          }
+        }
+        # Enable unauthenticated metrics access (necessary for Prometheus Operator)
+        telemetry {
+          unauthenticated_metrics_access = "true"
+          disable_hostname = true
+          prometheus_retention_time = "12h"
+        }
+        storage "raft" {
+          path = "/vault/data"
+          retry_join {
+          leader_api_addr = "http://vault-0.vault-internal:8200"
+          }
+          retry_join {
+          leader_api_addr = "http://vault-1.vault-internal:8200"
+          }
+          retry_join {
+          leader_api_addr = "http://vault-2.vault-internal:8200"
+          }
+          retry_join {
+          leader_api_addr = "http://vault-3.vault-internal:8200"
+          }
+          retry_join {
+          leader_api_addr = "http://vault-4.vault-internal:8200"
+          }
+            autopilot {
+              cleanup_dead_servers = "true"
+              dead_server_last_contact_threshold = "10s"
+              last_contact_threshold = 3000
+              last_contact_failure_threshold = "10m"
+              max_trailing_logs = 250000
+              min_quorum = 0
+              server_stabilization_time = "60s"
+            }
+        }
+        service_registration "kubernetes" {}
+ui:
+  enabled: true
+  serviceType: "LoadBalancer"
+  serviceNodePort: null
+  externalPort: 8200
+
