@@ -9,13 +9,14 @@ The steps from this repository are closely following the Tutorial [Vault on Kube
 ----
 
 ## Requirements
- - A Vault Vault Enterprise Edition [https://www.vaultproject.io]
+ - A Vault Enterprise Edition [https://www.vaultproject.io]
  - An AWS account (https://aws.amazon.com/account/)  
  - AWS command-line interface (CLI) (https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html)
  - Amazon EKS CLI (https://aws.amazon.com/cli/)
  - Kubernetes CLI (https://kubernetes.io/docs/tasks/tools/install-kubectl/)
  - Helm CLI (https://helm.sh/docs/helm/)
  - A valid Vault Enterprise license.
+ - JQ package [JQ Download](https://stedolan.github.io/jq/download/)
 
 ----
 ## Steps to deploy an AWS EKS cluster and install a Vault cluster
@@ -24,6 +25,8 @@ The steps from this repository are closely following the Tutorial [Vault on Kube
  - Amazon EKS CLI [`eksctl info`]
  - Kubectl CLI [`kubectl version`]
  - Helm CLI [`helm version`]
+ - JQ utility [`jq --version`]
+ - Vault Enterprise Server binary [`vautl version`]
 
 2. Set the location of your working directory and clone this repo
 ````shell
