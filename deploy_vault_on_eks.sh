@@ -41,13 +41,13 @@ function create_iam {
 
 function create_eks_cluster {
   # Delete EKS cluster
-  eksctl get cluster -n $CLUSTEREKSNAME  -o json |jq -r '.[].Status'|grep -i 'ACTIVE' || eksctl get cluster -n $CLUSTEREKSNAME  -o json |jq -r '.[].Status'|grep -i 'DELETING' && echo 1
+  eksctl get cluster -n $CLUSTEREKSNAME  -o json 2>/dev/null|jq -r '.[].Status'|grep -i 'ACTIVE' || eksctl get cluster -n $CLUSTEREKSNAME -o json 2>/dev/null |jq -r '.[].Status'|grep -i 'DELETING' && echo 
   if [ $? -eq 0 ] ; then
     echo "Cluster: $CLUSTEREKSNAME is already ACTIVE!"
     echo "Destroy EKS?[Default n]" ; read ans
     # Destroy will involve creation
     if [ "Z$ans" == "Zy" ] ; then
-      eksctl delete cluster --region=eu-central-1 --name=$CLUSTEREKSNAME
+      eksctl delete cluster --region=eu-central-1 --name=$CLUSTEREKSNAME 2>/dev/null
       while eksctl get cluster -n $CLUSTEREKSNAME  -o json |jq -r '.[].Status'|grep -i 'DELETING'  ; do
          echo . ; sleep 1
       done
@@ -57,7 +57,7 @@ function create_eks_cluster {
     fi
   else
     # Create EKS cluster if not already ACTIVE
-    eksctl get cluster -n $CLUSTEREKSNAME  -o json |jq -r '.[].Status'|grep -i 'ACTIVE' 
+    eksctl get cluster -n $CLUSTEREKSNAME  -o json |jq -r '.[].Status'|grep -i 'ACTIVE' 2>/dev/null
     [ $? -eq 0 ] || eksctl create cluster \
 --name ${CLUSTEREKSNAME} \
 --nodes 4 \
