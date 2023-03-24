@@ -13,6 +13,7 @@ export NAMESPACE='vault'
 export CLUSTEREKSNAME='k8s-eks'
 export VAULT_LICENSE=$(cat ./vault_license.hclic)
 export ROOT_PASSWORD="change_me_unsecure"
+export AWSKEYSSH=mykeypair1
 
 # getcreds
 # kubectl config get-contexts
@@ -58,11 +59,11 @@ function create_eks_cluster {
     # Create EKS cluster if not already ACTIVE
     eksctl get cluster -n $CLUSTEREKSNAME  -o json |jq -r '.[].Status'|grep -i 'ACTIVE' 
     [ $? -eq 0 ] || eksctl create cluster \
---name k8s-florin \
+--name ${CLUSTEREKSNAME} \
 --nodes 4 \
 --with-oidc \
 --ssh-access \
---ssh-public-key mykeypair1 \
+--ssh-public-key ${AWSKEYSSH} \
 --managed
    [ $? -eq 0 ] && echo "EKS cluster created."
  fi
