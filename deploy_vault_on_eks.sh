@@ -123,6 +123,7 @@ function create_vault {
   	--namespace="${NAMESPACE?}" \
   	-f ${DIR?}/values.yaml 1>/dev/null
   
+  sleep 5
   kubectl get pods -n $NAMESPACE
   kubectl get pvc
   
